@@ -4,6 +4,7 @@ let favoriteNumber = 16;
 const NUMBERS_API_URL = "http://numbersapi.com";
 //1.
 /** Makes request to Numbers API for trivia about a number. Console logs trivia*/
+//pass in number instead of global var
 async function showNumberTrivia() {
   const response = await fetch(`${NUMBERS_API_URL}/${favoriteNumber}?json`);
   const data = await response.json();
@@ -11,23 +12,23 @@ async function showNumberTrivia() {
   console.log(data.text);
 }
 
-// showNumberTrivia()
-
 //2.
 /** Makes 4 requests to Numbers API, console logs trivia that returns first. */
 async function showNumberRace() {
+  //change names-these are not numbers
   const n1 = fetch(`${NUMBERS_API_URL}/1?json`);
   const n2 = fetch(`${NUMBERS_API_URL}/2?json`);
   const n3 = fetch(`${NUMBERS_API_URL}/3?json`);
   const n4 = fetch(`${NUMBERS_API_URL}/4?json`);
 
+  //use map to get array of promises
+  //winningResponse
   const response = await Promise.race([n1, n2, n3, n4]);
   const data = await response.json();
 
   console.log(data.text);
 }
 
-// showNumberRace()
 
 //3.
 /** Makes requests for different numbers, with at least one invalid number str
@@ -40,10 +41,12 @@ async function showNumberAll() {
   const n4 = fetch(`${NUMBERS_API_URL}/4?json`);
 
   const outcomes = await Promise.allSettled([n1, n2, n3, n4]);
-
+  console.log("outcomes=", outcomes)
   const fulfilled = [];
   const rejected = [];
 
+  //check if fulfilled
+  //filter
   for (const outcome of outcomes) {
 
     const response = await outcome.value;
@@ -62,4 +65,13 @@ async function showNumberAll() {
 
 }
 
-showNumberAll();
+
+//4.
+/**Calls three other functions one at a time only after current function completes. */
+async function main(){
+  await showNumberTrivia();
+  await showNumberRace();
+  await showNumberAll();
+}
+
+main();
